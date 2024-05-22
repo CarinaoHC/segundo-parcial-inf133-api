@@ -8,17 +8,18 @@ user_bp = Blueprint("user", __name__)
 @user_bp.route("/register", methods=["POST"])
 def register():
     data = request.json
-    username = data.get("username")
+    name = data.get("name")
+    email = data.get("email")
     password = data.get("password")
-    roles = data.get("roles")
+    role = data.get("role")
 
-    if not username or not password:
+    if not name or not password:
         return jsonify({"error": "Se requieren nombre de usuario y contraseña"}), 400
 
-    existing_user = User.find_by_username(username)
+    existing_user = User.find_by_name(name)
     if existing_user:
         return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
-    new_user = User(username, password, roles)
+    new_user = User(name, email, password, role)
     new_user.save()
     return jsonify({"message": "Usuario creado exitosamente"}), 201
 
@@ -26,12 +27,12 @@ def register():
 @user_bp.route("/login", methods=["POST"])
 def login():
     data = request.json
-    username = data.get("username")
+    email = data.get("email")
     password = data.get("password")
 
-    user = User.find_by_username(username)
-    if user and check_password_hash(user.password_hash, password):
-        access_token = create_access_token(identity={"username": username, "roles": user.roles})
+    user = User.find_by_email(email)
+    if user and check_password_hash(user.password, password):
+        access_token = create_access_token(identity={"email": email, "role": user.role})
         return jsonify(access_token=access_token), 200
     else:
         return jsonify({"error": "Credenciales inválidas"}), 401

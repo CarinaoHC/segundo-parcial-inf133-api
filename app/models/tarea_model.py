@@ -1,49 +1,55 @@
 from database import db
 
 
-# Define la clase `Tarea` que hereda de `db.Model`
-# `Tarea` representa la tabla `tareas` en la base de datos
 class Tarea(db.Model):
     __tablename__ = "tareas"
 
-    # Define las columnas de la tabla `tareas`
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    species = db.Column(db.String(100), nullable=False)
-    age = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.String(100), nullable=False)
+    assigned_to = db.Column(db.String(100), nullable=False)
 
-    # Inicializa la clase `Tarea`
-    def __init__(self, title, species, age):
+    def __init__(self, title, description, status, created_at, assigned_to):
         self.title = title
-        self.species = species
-        self.age = age
+        self.description = description
+        self.status = status
+        self.created_at = created_at
+        self.assigned_to = assigned_to
 
-    # Guarda un tarea en la base de datos
     def save(self):
         db.session.add(self)
         db.session.commit()
 
-    # Obtiene todos los tareaes de la base de datos
     @staticmethod
     def get_all():
         return Tarea.query.all()
 
-    # Obtiene un tarea por su ID
     @staticmethod
     def get_by_id(id):
         return Tarea.query.get(id)
 
-    # Actualiza un tarea en la base de datos
-    def update(self, title=None, species=None, age=None):
+    def update(
+        self,
+        title=None,
+        description=None,
+        status=None,
+        created_at=None,
+        assigned_to=None,
+    ):
         if title is not None:
             self.title = title
-        if species is not None:
-            self.species = species
-        if age is not None:
-            self.age = age
+        if description is not None:
+            self.description = description
+        if status is not None:
+            self.status = status
+        if created_at is not None:
+            self.created_at = created_at
+        if assigned_to is not None:
+            self.assigned_to = assigned_to
         db.session.commit()
 
-    # Elimina un tarea de la base de datos
     def delete(self):
         db.session.delete(self)
         db.session.commit()
